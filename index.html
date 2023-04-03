@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.8" />
+    <title>Crop Disease classifiers</title>
+  </head>
+  <body>
+    <center>
+      <h1>🌱 Crop Disease classifier</h1>
+    </center>
+
+    <div class="layout">
+      <div class="image-section">
+        <img
+          class="crop-image"
+          id="crop-image"
+          src="https://extension.umn.edu/sites/extension.umn.edu/files/marssonia-leaf-spot-on-euonymus-grabowski.jpg"
+          alt=""
+        />
+      </div>
+
+      <div class="convert-button">Classify 🚀</div>
+
+      <div class="results-section">
+        <iframe
+          class="wiki-info"
+          id="wiki-info"
+          src="javascript:void(0);"
+        ></iframe>
+      </div>
+    </div>
+
+    <hr />
+    <hr />
+
+    <details>
+      <summary>
+        Click here to show images 👇
+      </summary>
+        <div></div>
+        <div id="images-for-test"></div>
+    </details>
+  </body>
+  <style>
+    .layout {
+      background: FFE6E6FF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 65vh;
+    }
+
+    .wiki-info {
+      width: 100%;
+      height: 100%;
+    }
+
+    summary{
+        font-size: 20px;
+        background-color: grey;
+        color:white;
+        padding: 10px;
+    }
+
+    /* .crop-on-image { */
+    /* object-fit:scale-down; */
+    /* } */
+
+    .user-grid-image {
+      width: 10vw;
+      height: 10vw;
+      margin: 5px 5px;
+      border-radius: 0;
+    }
+
+    .image-section {
+      /* background: pink; */
+      height: 50vh;
+      width: 30vw;
+      margin-left: 10vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .convert-button {
+      background: pink;
+      font-size: 40px;
+    }
+
+    .results-section {
+      background: pink;
+      height: 50vh;
+      width: 30vw;
+      margin-right: 10vw;
+    }
+
+    .user-grid-image{
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: 800px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .results-section {
+        margin: 0;
+        width: 90vw;
+      }
+
+      .image-section {
+        margin: 0;
+        width: 90vw;
+      }
+
+      .convert-button {
+        margin: 20px;
+      }
+
+      .user-grid-image {
+        width: 100%;
+        height: 75%;
+        margin: 5px 5px;
+        border-radius: 0;
+        cursor:alias;
+      }
+
+    }
+  </style>
+  <script>
+    const preloadImages = (array) => {
+      if (!preloadImages.list) {
+        preloadImages.list = [];
+      }
+      var list = preloadImages.list;
+      for (var i = 0; i < array.length; i++) {
+        var img = new Image();
+        img.onload = function () {
+          var index = list.indexOf(this);
+          if (index !== -1) {
+            // remove image from the array once it's loaded
+            // for memory consumption reasons
+            list.splice(index, 1);
+          }
+        };
+        list.push(img);
+        img.src = array[i];
+      }
+    };
+
+    function setPrimaryImage(imageUrl,wikiPage){
+        document.getElementById("crop-image").src = imageUrl
+        document.getElementById("wiki-info").src = wikiPage
+        alert(imageUrl)
+    }
+
+    async function getMeImages() {
+      const response = await fetch("http://127.0.0.1:10001");
+      let imagesSection = document.getElementById("images-for-test");
+
+      const plant_info = await response.json();
+      let sampleImages = [];
+      for (plant of plant_info) {
+        console.log("✅", plant.ImageUrl);
+        sampleImages.push(plant.ImageUrl);
+        imagesSection.innerHTML += `
+          <img  onclick="setPrimaryImage('${plant.ImageUrl}','${plant.WikiPage}')" class="user-grid-image" src="${plant.ImageUrl}" loading="lazy"></img>`;
+      }
+
+      preloadImages(sampleImages);
+    }
+
+    getMeImages();
+  </script>
+</html>
