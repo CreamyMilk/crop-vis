@@ -21,13 +21,13 @@
         />
       </div>
 
-      <div class="convert-button">Classify 🚀</div>
+      <div class="convert-button">🔎🔎🔎</div>
 
       <div class="results-section">
         <iframe
           class="wiki-info"
           id="wiki-info"
-          src="javascript:void(0);"
+          src="https://en.wikipedia.org/wiki/apple_rust"
         ></iframe>
       </div>
     </div>
@@ -59,8 +59,9 @@
 
     summary{
         font-size: 20px;
-        background-color: grey;
-        color:white;
+        /* background-color: grey; */
+        background-color: rgb(139, 247, 139);
+        color:black;
         padding: 10px;
     }
 
@@ -86,12 +87,12 @@
     }
 
     .convert-button {
-      background: pink;
+      background: rgb(139, 247, 139);
       font-size: 40px;
     }
 
     .results-section {
-      background: pink;
+      background: gainsboro;
       height: 50vh;
       width: 30vw;
       margin-right: 10vw;
@@ -152,9 +153,10 @@
     };
 
     function setPrimaryImage(imageUrl,wikiPage){
-        document.getElementById("crop-image").src = imageUrl
-        document.getElementById("wiki-info").src = wikiPage
-        alert(imageUrl)
+        if (confirm("Do you want to classify new image")){
+            document.getElementById("crop-image").src = imageUrl
+            document.getElementById("wiki-info").src = wikiPage
+        }
     }
 
     async function getMeImages() {
