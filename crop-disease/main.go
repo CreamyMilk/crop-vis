@@ -3,12 +3,39 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"math"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/mattn/go-tflite"
 	"github.com/rs/cors"
 )
+
+func EvaluatePlants() float64 {
+	model := tflite.NewModelFromFile("sin_model.tflite")
+	if model == nil {
+		log.Fatal("cannot load model")
+	}
+	defer model.Delete()
+
+	options := tflite.NewInterpreterOptions()
+	defer options.Delete()
+
+	interpreter := tflite.NewInterpreter(model, options)
+	defer interpreter.Delete()
+
+	interpreter.AllocateTensors()
+
+	v := float64(1.2) * math.Pi / 180.0
+	input := interpreter.GetInputTensor(0)
+	input.Float32s()[0] = float32(v)
+	interpreter.Invoke()
+	got := float64(interpreter.GetOutputTensor(0).Float32s()[0])
+
+	return got
+}
 
 func baseHandler(w http.ResponseWriter, req *http.Request) {
 	allFilesInJson := getAllFilesInCurrentDir()
